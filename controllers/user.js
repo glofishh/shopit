@@ -63,6 +63,33 @@ exports.addOrderToUserHistory = (req, res, next) => {
   );
 };
 
+exports.addProductToUserFavorites = (req, res, next) => {
+  let favorites = [];
+
+  req.body.order.products.forEach(item => {
+    favorites.push({
+      _id: item._id,
+      name: item.name,
+      description: item.description,
+      category: item.category
+    });
+  });
+
+  User.findOneAndUpdate(
+      { _id: req.profile._id },
+      { $push: { favorites: favorites } },
+      { new: true },
+      (error, data) => {
+        if (error) {
+          return res.status(400).json({
+            error: 'could not update user favorites'
+          });
+        }
+        next();
+      }
+  );
+};
+
 exports.purchaseHistory = (req, res) => {
   Order.find({ user: req.profile._id })
     .populate('user', '_id name')
