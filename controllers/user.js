@@ -1,5 +1,6 @@
-const User = require('../models/user');
+const { User } = require('../models/user');
 const { Order } = require('../models/order');
+const { Favorites, FavoriteItem } = require('../models/favorites');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.userById = (req, res, next, id) => {
@@ -63,32 +64,53 @@ exports.addOrderToUserHistory = (req, res, next) => {
   );
 };
 
-exports.addProductToUserFavorites = (req, res, next) => {
-  let favorites = [];
 
-  req.body.order.products.forEach(item => {
-    favorites.push({
-      _id: item._id,
-      name: item.name,
-      description: item.description,
-      category: item.category
-    });
-  });
+exports.addProductToUserFavorites = (req, res) => {
+  const newFavoriteItem = new FavoriteItem(req.body);
+  console.log(newFavoriteItem)
 
   User.findOneAndUpdate(
-      { _id: req.profile._id },
-      { $push: { favorites: favorites } },
-      { new: true },
-      (error, data) => {
-        if (error) {
-          return res.status(400).json({
-            error: 'could not update user favorites'
-          });
-        }
-        next();
+    { _id: req.profile._id },
+    { $addToSet: { favorites: newFavoriteItem } },
+    (error, data) => {
+      if (error) {
+        console.log('got to error')
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        });
       }
+      console.log(req.profile.favorites)
+      res.json(req.profile.favorites)
+    }
   );
 };
+
+// exports.addProductToUserFavorites = (req, res, next) => {
+//   let favorites = [];
+//   let newFavorite = req.body;
+
+//   favorites.push({
+//       _id: newFavorite._id,
+//       name: newFavorite.name,
+//       description: newFavorite.description,
+//       category: newFavorite.category
+//   });
+
+//   User.findOneAndUpdate(
+//       { _id: req.profile._id },
+//       { $push: { favorites: favorites } },
+//       { new: true },
+//       (error, data) => {
+//         if (error) {
+//           console.log('got to error')
+//           return res.status(400).json({
+//             error: 'could not update user favorites'
+//           });
+//         }
+//         next();
+//       }
+//   );
+// };
 
 exports.purchaseHistory = (req, res) => {
   Order.find({ user: req.profile._id })
@@ -101,5 +123,29 @@ exports.purchaseHistory = (req, res) => {
         })
       }
       res.json(orders);
+    });
+};
+
+// exports.favoritesList = (req, res) => {
+//   User.find({ user: req.profile._id })
+//     .exec((err, favorites) => {
+//       if (err) {
+//         return res.status(400).json({
+//           error: errorHandler(err)
+//         })
+//       }
+//       res.json(favorites);
+//     });
+// };
+
+exports.favoritesByUserId = (req, res) => {
+  User.find({user: req.profile._id}, (err, data) => { 
+      if (err) {
+        return res.status(400).json({
+          error: 'cannot get favorites by user'
+        });
+      }
+      console.log(req.profile._id);
+      res.json(req.profile.favorites)
     });
 };

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const uuidv1 = require('uuid/v1');
+// const { FavoriteItem, FavoritesSchema } = require('./favorites');
+
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -35,7 +37,7 @@ const userSchema = new mongoose.Schema({
     favorites: {
       type: Array,
       default: []
-    }
+    },
   },
   { timestamps: true }
 );
@@ -68,4 +70,7 @@ userSchema.methods = {
   }
 };
 
-module.exports = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+
+module.exports = { User };
