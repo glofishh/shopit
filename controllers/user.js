@@ -98,14 +98,15 @@ exports.addFavorite = (req, res) => {
   );
 };
 
-exports.removeFavorite = (req, res) => {
+exports.removeFavorite = (req, res, itemId) => {
   //need to delete by ID of favorite
-  const selectedFavoriteItem = FavoriteItem(req.body);
-  console.log(selectedFavoriteItem)
+  itemId = req.params.itemId;
 
+  console.log('req.params is ' + itemId)
   User.findOneAndUpdate(
     { _id: req.profile._id },
-    { $pull: { favorites: selectedFavoriteItem } },
+    { $pull: { favorites: { id: itemId } } },
+    {multi:true},
     (error, data) => {
       if (error) {
         console.log('got to error')
@@ -113,8 +114,8 @@ exports.removeFavorite = (req, res) => {
           error: 'could not update user favorites'
         });
       }
+      console.log(itemId)
       console.log(req.profile.favorites)
-      console.log(req.profile.favorites.length)
       res.json(`item ${req.body.name} successfully deleted from favorites`);
     }
   );
