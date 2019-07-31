@@ -4,7 +4,7 @@ const { ObjectId } = mongoose.Schema;
 
 const FavoriteItemSchema = new mongoose.Schema(
   {
-    user: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: "User" },
     product: { type: ObjectId, ref: 'Product' },
     name: String,
     description: String,
@@ -16,4 +16,14 @@ const FavoriteItemSchema = new mongoose.Schema(
 
 const FavoriteItem = mongoose.model('FavoriteItem', FavoriteItemSchema);
 
-module.exports = { FavoriteItem };
+const FavoritesListSchema = new mongoose.Schema(
+  {
+    products: [FavoriteItemSchema],
+    user: { type: ObjectId, ref: "User" }
+  },
+  { timestamps: true }
+);
+
+const FavoritesList = mongoose.model("FavoritesList", FavoritesListSchema);
+
+module.exports = { FavoriteItem, FavoritesList };

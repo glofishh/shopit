@@ -1,23 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const { favoriteById, add, read, remove, list } = require('../controllers/favorites');
+const { favoriteItemById, add, remove, clear } = require('../controllers/favorites');
 const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
 const { userById } = require('../controllers/user');
+const { productById } = require('../controllers/product');
 
 
-// router.get('/secret/:userId', requireSignin, isAuth, isAdmin, (req, res) => {
-//   res.json({
-//     user: req.profile
-//   });
-// });
 
+router.post('/favorites/add/:userId', requireSignin, isAuth, add);
+router.put('/favorites/remove/:userId', requireSignin, isAuth, remove);
+router.put('/favorites/clear/all/:userId', requireSignin, isAuth, clear);
 
-router.get('/favorites/:favoriteId', read);
-router.post('/favorites/add/:userId', add);
-router.delete('/favorites/:favoriteId/:userId', remove);
-
-router.param('favoriteId', favoriteById);
+router.param('favoriteItemById', favoriteItemById);
 router.param('userId', userById);
 
 
