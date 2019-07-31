@@ -1,5 +1,6 @@
-const User = require('../models/user');
+const { User } = require('../models/user');
 const { Order } = require('../models/order');
+const { FavoriteItem } = require('../models/favorites');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.userById = (req, res, next, id) => {
@@ -74,5 +75,72 @@ exports.purchaseHistory = (req, res) => {
         })
       }
       res.json(orders);
+    });
+};
+
+exports.addFavorite = (req, res) => {
+  const newFavoriteItem = new FavoriteItem(req.body);
+  console.log(newFavoriteItem)
+
+  User.findOneAndUpdate(
+    { _id: req.profile._id },
+    { $addToSet: { favorites: newFavoriteItem } },
+    (error, data) => {
+      if (error) {
+        console.log('got to error')
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        });
+      }
+      console.log(req.profile.favorites)
+      res.json((`item ${req.body.name} successfully added to favorites`))
+    }
+  );
+};
+
+exports.removeFavorite = (req, res, itemId) => {
+  //need to delete by ID of favorite
+  itemId = req.params.itemId;
+
+  console.log('req.params is ' + itemId)
+  User.findOneAndUpdate(
+    { _id: req.profile._id },
+    { $pull: { favorites: { id: itemId } } },
+    {multi:true},
+    (error, data) => {
+      if (error) {
+        console.log('got to error')
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        });
+      }
+      console.log(itemId)
+      console.log(req.profile.favorites)
+      res.json(`item ${req.body.name} successfully deleted from favorites`);
+    }
+  );
+};
+
+// exports.favoritesList = (req, res) => {
+//   User.find({ user: req.profile._id })
+//     .exec((err, favorites) => {
+//       if (err) {
+//         return res.status(400).json({
+//           error: errorHandler(err)
+//         })
+//       }
+//       res.json(favorites);
+//     });
+// };
+
+exports.getAllFavorites = (req, res) => {
+  User.find({user: req.profile._id}, (err, data) => { 
+      if (err) {
+        return res.status(400).json({
+          error: 'cannot get favorites by user'
+        });
+      }
+      console.log(req.profile.favorites.length);
+      res.json(req.profile.favorites)
     });
 };
