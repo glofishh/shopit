@@ -1,5 +1,18 @@
-const { FavoriteItem, Favorites } = require('../models/favorites');
+const { FavoriteItem } = require('../models/favorites');
 const { errorHandler } = require('../helpers/dbErrorHandler');
+
+
+exports.favoriteById = (req, res, next, id) => {
+  FavoriteItem.findById(id).exec((err, favorite) => {
+      if (err || !favorite) {
+          return res.status(400).json({
+              error: "Favorited item not found"
+          });
+      }
+      req.favorite = favorite;
+      next();
+  });
+};
 
 exports.addFavorite = (req, res) => {
   const newFavoriteItem = new FavoriteItem(req.body);
