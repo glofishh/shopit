@@ -14,17 +14,18 @@ const {
     clearFavorites
 } = require("../controllers/user");
 const { favoriteById } = require("../controllers/favorites");
+const { productById } = require("../controllers/product");
 
 
 router.get("/user/:userId", requireSignin, isAuth, read);
 router.put("/user/:userId", requireSignin, isAuth, update);
 router.get("/orders/by/user/:userId", requireSignin, isAuth, purchaseHistory);
 router.get('/favorites/by/user/:userId', requireSignin, isAuth, getAllFavorites);
-router.put('/favorites/add/:userId', requireSignin, isAuth, addFavorite);
-router.put('/favorites/remove/:favoriteId/:userId', requireSignin, isAuth, removeFavorite);
+router.put('/favorites/add/:productId/:userId', requireSignin, isAuth, addFavorite);
+router.put('/favorites/remove/:productId/:userId', requireSignin, isAuth, removeFavorite);
 router.put('/favorites/remove/all/:userId', requireSignin, isAuth, clearFavorites);
 
-
+router.param("productId", productById);
 router.param("userId", userById);
 router.param("favoriteId", favoriteById);
 

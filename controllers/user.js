@@ -2,6 +2,8 @@ const User = require("../models/user");
 const { Order } = require("../models/order");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const { FavoriteItem } = require("../models/favorites");
+const Product = require("../models/product");
+
 
 exports.userById = (req, res, next, id) => {
   User.findById(id).exec((err, user) => {
@@ -83,41 +85,62 @@ exports.purchaseHistory = (req, res) => {
       });
 };
 
-
 exports.addFavorite = (req, res) => {
-  const newFavoriteItem = new FavoriteItem(req.body);
-
-  User.findOneAndUpdate(
-    { _id: req.profile._id },
-    { $addToSet: { favorites: newFavoriteItem } },
-    (error, data) => {
-      if (error) {
-        console.log('got to error')
-        return res.status(400).json({
-          error: 'could not update user favorites'
-        });
-      }
-      res.json((`item ${req.body.name} successfully added to favorites`))
+  let product = req.product;
+  product.remove((err, deletedProduct) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler(err)
+      });
     }
-  );
+
+      User.findOneAndUpdate(
+        { _id: req.profile._id },
+        { $addToSet: { favorites: product } },
+        (error, result) => {
+          if (error) {
+            console.log('got to error')
+            return res.status(400).json({
+              error: 'could not update user favorites'
+            });
+          }
+          console.log(req.profile.favorites)
+        console.log('LENGTH OF FAVORITES ' + req.profile.favorites.length)
+          res.json(`user favorites list updated`)
+        }
+      );
+      // res.json(`item ${data.name} successfully added to favorites`)
+    });
 };
 
 exports.removeFavorite = (req, res) => {
-  const selectedItem = FavoriteItem(req.body);
-
-  User.findOneAndUpdate(
-    { _id: req.profile._id },
-    { $pull: { favorites: selectedItem } },
-    (error, data) => {
-      if (error) {
-        console.log('got to error')
+  console.log('HELLO')
+  Product.find({ _id: req.params.productId })
+    .exec((err, product) => {
+      if (err) {
+        console.log('CANT FIND PRODUCT WHY')
         return res.status(400).json({
-          error: 'could not update user favorites'
+          error: 'boo'
         });
       }
-      res.json((`item ${req.body.name} successfully removed from favorites`))
-    }
-  );
+      console.log('THIS SHOULD BE A FAVORITE PRODUCT ' + product);
+    })
+    User.findOneAndUpdate(
+      { _id: req.profile._id },
+      { $unset: { favorites: product } },
+      (error, result) => {
+        if (error) {
+          console.log('got to error')
+          return res.status(400).json({
+            error: 'could not update user favorites'
+          });
+        }
+        console.log(req.profile.favorites)
+        console.log('LENGTH OF FAVORITES ' + req.profile.favorites.length)
+        res.json((`item successfully removed from favorites`))
+      }
+    );
+
 };
 
 exports.clearFavorites = (req, res) => {
