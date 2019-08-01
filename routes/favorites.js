@@ -9,10 +9,10 @@ const { productById } = require('../controllers/product');
 
 
 router.post('/favorites/add/:userId', requireSignin, isAuth, add);
-router.put('/favorites/remove/:userId', requireSignin, isAuth, remove);
+router.put('/favorites/remove/:favoriteItemId/:userId', requireSignin, isAuth, remove);
 router.put('/favorites/clear/all/:userId', requireSignin, isAuth, clear);
 
-router.param('favoriteItemById', favoriteItemById);
+router.param('favoriteItemId', favoriteItemById);
 router.param('userId', userById);
 
 

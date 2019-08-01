@@ -16,14 +16,4 @@ const FavoriteItemSchema = new mongoose.Schema(
 
 const FavoriteItem = mongoose.model('FavoriteItem', FavoriteItemSchema);
 
-const FavoritesListSchema = new mongoose.Schema(
-  {
-    products: [FavoriteItemSchema],
-    user: { type: ObjectId, ref: "User" }
-  },
-  { timestamps: true }
-);
-
-const FavoritesList = mongoose.model("FavoritesList", FavoritesListSchema);
-
-module.exports = { FavoriteItem, FavoritesList };
+module.exports = { FavoriteItem };
