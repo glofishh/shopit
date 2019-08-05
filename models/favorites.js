@@ -1,29 +1,19 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const { ObjectId } = mongoose.Schema;
+// const mongoose = require('mongoose');
+// const Schema = mongoose.Schema;
+// const { ObjectId } = mongoose.Schema;
 
-const FavoriteItemSchema = new mongoose.Schema(
-  {
-    user: { type: ObjectId, ref: "User" },
-    product: { type: ObjectId, ref: 'Product' },
-    name: String,
-    description: String,
-    category: { type: ObjectId, ref: 'Category'},
-    price: Number
-  },
-  { timestamps: true }
-);
+// const FavoriteItemSchema = new mongoose.Schema(
+//   {
+//     user: { type: ObjectId, ref: "User" },
+//     product: { type: ObjectId, ref: 'Product' },
+//     name: String,
+//     description: String,
+//     category: { type: ObjectId, ref: 'Category'},
+//     price: Number
+//   },
+//   { timestamps: true }
+// );
 
-const FavoriteItem = mongoose.model('FavoriteItem', FavoriteItemSchema);
+// const FavoriteItem = mongoose.model('FavoriteItem', FavoriteItemSchema);
 
-const FavoritesListSchema = new mongoose.Schema(
-  {
-    products: [FavoriteItemSchema],
-    user: { type: ObjectId, ref: "User" }
-  },
-  { timestamps: true }
-);
-
-const FavoritesList = mongoose.model("FavoritesList", FavoritesListSchema);
-
-module.exports = { FavoriteItem, FavoritesList };
+// module.exports = { FavoriteItem };
