@@ -1,4 +1,3 @@
-const { errorHandler } = require('../helpers/dbErrorHandler');
 const Product = require('../models/product');
 const User = require("../models/user");
 
