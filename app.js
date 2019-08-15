@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const morgan = require('morgan');
+const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -42,6 +43,14 @@ app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
 
+//serve React files in production
+app.use(express.static(path.join(__dirname, 'build')))
+
+//anything that doesn't match send back to index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/build/index.html'))
+})
+
 //routes middleware
 //use /api to get all routes but in localhost add /api to url
 app.use('/api', authRoutes);
@@ -51,15 +60,6 @@ app.use('/api', productRoutes);
 app.use('/api', braintreeRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', favoritesRoutes);
-
-//TEST ROUTE IN CASE DB DOESNT WORK
-app.get('/api/test/', cors(), async (req, res, next) => {
-  try {
-    res.json('did i make it?')
-  } catch (err) {
-    next(err)
-  }
-})
 
 const port = process.env.PORT || 8000
 
