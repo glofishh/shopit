@@ -44,11 +44,11 @@ app.use(expressValidator());
 app.use(cors());
 
 //serve React files in production
-app.use(express.static(path.join(__dirname, 'build')))
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 //anything that doesn't match send back to index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/build/index.html'))
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
 })
 
 //routes middleware
