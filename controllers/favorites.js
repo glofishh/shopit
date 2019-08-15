@@ -1,57 +1,62 @@
-const { FavoriteItem, Favorites } = require('../models/favorites');
-const { errorHandler } = require('../helpers/dbErrorHandler');
+const Product = require('../models/product');
+const User = require("../models/user");
 
-exports.addFavorite = (req, res) => {
-  const newFavoriteItem = new FavoriteItem(req.body);
-  newFavoriteItem.save((err, data) => {
-    if(err) {
-      return res.status(400).json({
-        error: errorHandler(err)
-      });
-    }
-    res.json({data: data});
-  });
+
+exports.add = (req, res) => {
+  // console.log(req.body)
+  req.body.user = req.profile;
+  // console.log('USER ' + req.body.user)
+
+  const favorite = Product(req.body);
+  User.findOneAndUpdate(
+    { _id: req.body.user._id },
+    { $addToSet: { favorites: favorite } },
+    ((error, result) => {
+      if (error) {
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        })
+      }
+      res.json('added to favorites')
+    })
+  )
 };
 
-exports.readFavoriteItem = (req, res) => {
-  return res.json(req.FavoriteItem);
-}
+exports.remove = (req, res) => {
+  console.log(req.body)
+  req.body.user = req.profile;
+  const removedFavorite = Product(req.body);
 
-exports.removeFavoriteItem = (req, res) => {
-  const favoriteItem = req.favoriteItem;
-  favoriteItem.remove((err, data) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler(err)
-      });
-    }
-    res.json({
-      message: 'Favorites Item successfully deleted'
-    });
-  });
+  User.findOneAndUpdate(
+    { _id: req.body.user._id },
+    { $pull: { favorites: removedFavorite } },
+    ((error, result) => {
+      if (error) {
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        })
+      }
+      res.json(`deleted ${removedFavorite.name}`)
+    })
+  )
 };
 
-exports.listFavoriteItems = (req, res) => {
-  FavoriteItem.find().exec((err, data) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler(err)
-      })
-    }
-    res.json(data);
-  });
-};
+exports.clear = (req, res) => {
+  console.log(req.params)
+  req.params.userId = req.profile._id;
+  // console.log('USER ' + req.body.user)
+  // const deletedItem = FavoriteItem(req.body);
 
-exports.removeFavoriteItem = (req, res) => {
-  const favoriteItem = req.favoriteItem;
-  favoriteItem.remove((err, data) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler(err)
-      });
+  User.findOneAndUpdate(
+    { _id: req.params.userId },
+    { $set: { favorites: [] } },
+    (error, result) => {
+      if (error) {
+        return res.status(400).json({
+          error: 'could not update user favorites'
+        });
+      }
+      res.json(`removed  all from ${req.profile.name}'s favorites`)
     }
-    res.json({
-      message: 'Favorites Item successfully deleted'
-    });
-  });
+  );
 };
