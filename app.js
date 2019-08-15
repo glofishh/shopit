@@ -52,6 +52,15 @@ app.use('/api', braintreeRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', favoritesRoutes);
 
+//TEST ROUTE IN CASE DB DOESNT WORK
+app.get('/api/test/', cors(), async (req, res, next) => {
+  try {
+    res.json('did i make it?')
+  } catch (err) {
+    next(err)
+  }
+})
+
 const port = process.env.PORT || 8000
 
 app.listen(port, () => {
