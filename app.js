@@ -24,7 +24,7 @@ mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true
   })
-  .then(() => console.log('DB connected!'));
+  .then(() => console.log('DB connected to atlas!'));
 // mongoose
 //   .connect(process.env.DATABASE, {
 //     useNewUrlParser: true,
