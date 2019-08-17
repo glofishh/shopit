@@ -18,18 +18,18 @@ const favoritesRoutes = require('./routes/favorites');
 //app
 const app = express();
 
-//db
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true
-//   })
-//   .then(() => console.log('DB connected!'));
+// db
 mongoose
-  .connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useCreateIndex: true
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true
   })
   .then(() => console.log('DB connected!'));
+// mongoose
+//   .connect(process.env.DATABASE, {
+//     useNewUrlParser: true,
+//     useCreateIndex: true
+//   })
+//   .then(() => console.log('DB connected!'));
 mongoose
   .connection.on('error', err => {
     console.log(`DB connection error: ${err.message}`)});
