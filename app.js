@@ -21,7 +21,7 @@ const app = express();
 
 //db
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(process.env.MONGODB, {
     useNewUrlParser: true
   })
   .then(() => console.log('DB connected to atlas!'));
